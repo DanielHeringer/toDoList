@@ -13,7 +13,7 @@ class salvaAtividade : AppCompatActivity() {
 
 
     companion object {
-        public const val ATIVIDADE: String = "nomeAtividade"
+        public const val ATIVIDADE: String = "atividade"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +28,7 @@ class salvaAtividade : AppCompatActivity() {
 
 
     private fun salvaAtividade(){
-        val atividade = Atividade(editCoisa.text.toString())
+        val atividade = Atividade(editCoisa.text.toString(), editData.text.toString())
 
         abreLista(atividade)
 
@@ -37,7 +37,7 @@ class salvaAtividade : AppCompatActivity() {
     private fun abreLista(atividade: Atividade) {
 
         val abreLista = Intent(this, ListaCoisas::class.java)
-        abreLista.putExtra(ATIVIDADE, atividade.nome)
+        abreLista.putExtra(ATIVIDADE, atividade)
         setResult(Activity.RESULT_OK, abreLista)
         finish()
     }

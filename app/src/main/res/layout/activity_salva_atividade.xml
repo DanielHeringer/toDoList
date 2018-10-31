@@ -14,12 +14,21 @@
         android:layout_height="wrap_content"
         android:hint="Escreva uma atividade"
         android:layout_marginTop="15dp"
+        android:imeOptions="actionNext"
         />
+    <EditText
+        android:id="@+id/editData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editCoisa"
+        android:layout_marginRight="170dp"
+        android:imeOptions="actionDone"
+        android:hint="Data"/>
     <Button
         android:id="@+id/btnSalvar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editCoisa"
+        android:layout_below="@+id/editData"
         android:layout_marginTop="15dp"
         android:text="SALVAR"
         android:textStyle="bold"
