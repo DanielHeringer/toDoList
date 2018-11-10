@@ -1,4 +1,4 @@
-package com.mfelipe.app_todolist
+package com.mfelipe.app_todolist.entidade
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey

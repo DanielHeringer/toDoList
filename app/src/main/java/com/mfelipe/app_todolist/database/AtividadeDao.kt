@@ -1,6 +1,7 @@
-package com.mfelipe.app_todolist
+package com.mfelipe.app_todolist.database
 
 import android.arch.persistence.room.*
+import com.mfelipe.app_todolist.entidade.Atividade
 
 @Dao
 interface AtividadeDao {

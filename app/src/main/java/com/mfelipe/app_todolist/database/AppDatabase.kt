@@ -1,10 +1,10 @@
-package com.mfelipe.app_todolist
+package com.mfelipe.app_todolist.database
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
-import java.nio.file.attribute.DosFileAttributeView
+import com.mfelipe.app_todolist.entidade.Atividade
 
 @Database(entities = arrayOf(Atividade::class), version = 1)
 public abstract class AppDatabase: RoomDatabase() {

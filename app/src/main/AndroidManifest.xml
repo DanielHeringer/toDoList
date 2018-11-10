@@ -16,7 +16,7 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
         </activity>
-        <activity android:name=".salvaAtividade"></activity>
+        <activity android:name="com.mfelipe.app_todolist.cenario.cenario_salva_atividade.salvaAtividade"></activity>
     </application>
 
 </manifest>
