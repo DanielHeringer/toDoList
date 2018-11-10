@@ -16,14 +16,16 @@
         android:layout_marginTop="15dp"
         android:imeOptions="actionNext"
         />
-    <EditText
+    <TextView
         android:id="@+id/editData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editCoisa"
         android:layout_marginRight="170dp"
         android:imeOptions="actionDone"
-        android:hint="Data"/>
+        android:textSize="20sp"
+
+        />
     <Button
         android:id="@+id/btnSalvar"
         android:layout_width="match_parent"

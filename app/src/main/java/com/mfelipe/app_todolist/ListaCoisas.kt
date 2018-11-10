@@ -8,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_lista_coisas.*
+import org.jetbrains.anko.activityUiThreadWithContext
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class ListaCoisas : AppCompatActivity() {
 
@@ -18,6 +21,7 @@ class ListaCoisas : AppCompatActivity() {
 
     var listaAtividades: MutableList<Atividade> = mutableListOf()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_coisas)
@@ -27,7 +31,7 @@ class ListaCoisas : AppCompatActivity() {
 
         btnaddAtividade.setOnClickListener(){
             val CriarAtividade = Intent(this, salvaAtividade::class.java)
-            startActivityForResult(CriarAtividade, REQUEST_CADASTRO)
+            startActivity(CriarAtividade)
         }
 
     }override fun onResume() {
@@ -37,41 +41,41 @@ class ListaCoisas : AppCompatActivity() {
 
 
     private fun CarregaLista() {
+    // FAzer de forma assincrona
+       val atividadeDao = AppDatabase.getIstance(this).atividadeDao()
+       doAsync {
+           listaAtividades = atividadeDao.getAll() as MutableList<Atividade>
 
-        val adapter = atividadeAdapter(listaAtividades)
+           activityUiThreadWithContext {
+               val adapter = atividadeAdapter(listaAtividades)
 
-        //configura o clique em cada item da lista
-        adapter.setOnItemClickListener{ indexAtividadeClicada -> indexAtividadeClicada
-            val editaAtividade = Intent(this, salvaAtividade::class.java)
-            editaAtividade.putExtra(salvaAtividade.ATIVIDADE, listaAtividades.get(indexAtividadeClicada))
-            this.startActivityForResult(editaAtividade, REQUEST_CADASTRO)
+               //configura o clique em cada item da lista
+               adapter.setOnItemClickListener{ indexAtividadeClicada ->
+                   val editaAtividade = Intent(this, salvaAtividade::class.java)
+                   editaAtividade.putExtra(salvaAtividade.ATIVIDADE, listaAtividades.get(indexAtividadeClicada))
+                   startActivity(editaAtividade)
 
-        }
+               }
 
-        adapter.configuraCLiqueLongo { indexAtividadeClicada-> listaAtividades.removeAt(indexAtividadeClicada)
-            CarregaLista()
-            true
+               adapter.configuraCLiqueLongo {indexAtividadeClicada ->
+                doAsync {
+                    atividadeDao.delete(listaAtividades.get(indexAtividadeClicada))
 
+                   uiThread {
+                       CarregaLista()
+                   }
+                }
+                   true
 
-        }
+               }
 
-        val layoutManager = LinearLayoutManager(this)
+               val layoutManager = LinearLayoutManager(this)
 
-        rvListaCoisas.adapter = adapter
-        rvListaCoisas.layoutManager = layoutManager
-    }
+               rvListaCoisas.adapter = adapter
+               rvListaCoisas.layoutManager = layoutManager
+           }
+       }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if(requestCode == REQUEST_CADASTRO && resultCode == Activity.RESULT_OK) {
-
-
-            val novaAtividade: Atividade? = data?.getSerializableExtra(salvaAtividade.ATIVIDADE) as Atividade
-            if(novaAtividade != null){
-                listaAtividades.add(novaAtividade)
-            }
-        }
 
     }
 
