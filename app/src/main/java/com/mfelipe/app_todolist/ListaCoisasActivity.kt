@@ -12,7 +12,7 @@ import org.jetbrains.anko.activityUiThreadWithContext
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
-class ListaCoisas : AppCompatActivity() {
+class ListaCoisasActivity : AppCompatActivity(), ListaCoisasContract.View {
 
     companion object {
         private const val REQUEST_CADASTRO = 1
@@ -20,6 +20,7 @@ class ListaCoisas : AppCompatActivity() {
     }
 
     var listaAtividades: MutableList<Atividade> = mutableListOf()
+    val presenter: ListaCoisasContract.Presenter = ListaCoisasPresenter(this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +28,7 @@ class ListaCoisas : AppCompatActivity() {
         setContentView(R.layout.activity_lista_coisas)
 
 
-        CarregaLista()
+        //exibeLista()
 
         btnaddAtividade.setOnClickListener(){
             val CriarAtividade = Intent(this, salvaAtividade::class.java)
@@ -36,48 +37,39 @@ class ListaCoisas : AppCompatActivity() {
 
     }override fun onResume() {
         super.onResume()
-        CarregaLista()
+        presenter.onAtualizaLista(this)
     }
 
 
-    private fun CarregaLista() {
-    // FAzer de forma assincrona
-       val atividadeDao = AppDatabase.getIstance(this).atividadeDao()
-       doAsync {
-           listaAtividades = atividadeDao.getAll() as MutableList<Atividade>
+    override fun exibeLista(lista: MutableList<Atividade>) {
 
-           activityUiThreadWithContext {
-               val adapter = atividadeAdapter(listaAtividades)
+        listaAtividades = lista
 
-               //configura o clique em cada item da lista
-               adapter.setOnItemClickListener{ indexAtividadeClicada ->
-                   val editaAtividade = Intent(this, salvaAtividade::class.java)
-                   editaAtividade.putExtra(salvaAtividade.ATIVIDADE, listaAtividades.get(indexAtividadeClicada))
-                   startActivity(editaAtividade)
+        val adapter = atividadeAdapter(listaAtividades)
 
-               }
+        //configura o clique em cada item da lista
+        adapter.setOnItemClickListener{ indexAtividadeClicada ->
+            val editaAtividade = Intent(this, salvaAtividade::class.java)
+            editaAtividade.putExtra(salvaAtividade.ATIVIDADE, listaAtividades.get(indexAtividadeClicada))
+            startActivity(editaAtividade)
 
-               adapter.configuraCLiqueLongo {indexAtividadeClicada ->
-                doAsync {
-                    atividadeDao.delete(listaAtividades.get(indexAtividadeClicada))
+        }
 
-                   uiThread {
-                       CarregaLista()
-                   }
-                }
-                   true
+        adapter.configuraCLiqueLongo {indexAtividadeClicada ->
+            presenter.onDeleteAtividade(this, listaAtividades.get(indexAtividadeClicada))
+            true
 
-               }
+        }
 
-               val layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(this)
 
-               rvListaCoisas.adapter = adapter
-               rvListaCoisas.layoutManager = layoutManager
-           }
-       }
-
-
+        rvListaCoisas.adapter = adapter
+        rvListaCoisas.layoutManager = layoutManager
     }
+//}
+
+
+//}
 
     //salva a lista caso o android venha a destruir
 
